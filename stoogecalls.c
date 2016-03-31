@@ -72,10 +72,19 @@ SYSCALL_DEFINE2(smunch, pid_t,pid, long, bit_pattern){
   
 //Check if traced
   if(p->ptrace & PT_PTRACED){
-  pr_alert("\nError : Traced process, cannot proceed\n");
-  return -1;
+    pr_alert("\nError : Traced process, cannot proceed\n");
+    return -1;
   }
-  return 0;
-}
 
-	
+//Check if zombie state 
+  if(p->exit_state == EXIT_ZOMBIE){
+    pr_alert("\nIn zombie state\n");
+  }
+
+//Check if in task inunterruptible state
+  if(p->state == TASK_UNINTERRUPTIBLE){
+    pr_alert("\nIn uninterrruptible state\n");
+  }
+  release_task(p);
+return 0;
+}
