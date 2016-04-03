@@ -64,6 +64,10 @@ SYSCALL_DEFINE2(smunch, pid_t,pid, long, bit_pattern){
   struct task_struct *p;
   bool ret;
   p = pid_task(find_vpid(pid), PIDTYPE_PID);
+  if(!p){
+    pr_alert("\nprocess table is null");
+    return -1;
+  }
   ret = current_is_single_threaded();
   if(ret == false){
     pr_alert("\nError : Multithreaded process, cannot proceed\n");
@@ -78,13 +82,14 @@ SYSCALL_DEFINE2(smunch, pid_t,pid, long, bit_pattern){
 
 //Check if zombie state 
   if(p->exit_state == EXIT_ZOMBIE){
-    pr_alert("\nIn zombie state\n");
+    if((1 << SIGKILL-1) & bit_pattern){
+      release_task(p);
+    }
+    return 0;
   }
-
-//Check if in task inunterruptible state
-  if(p->state == TASK_UNINTERRUPTIBLE){
-    pr_alert("\nIn uninterrruptible state\n");
+  else{
+    wake_up_process(p);
+    p->pending.signal.sig[0] |= bit_pattern;
   }
-  release_task(p);
 return 0;
 }

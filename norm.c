@@ -11,7 +11,10 @@ void happy(){
 int main(){
   printf("goodnight, Irene?\n");
   signal(SIGUSR1, happy);
-  deepsleep();
   printf("oops.. wokeup!\n");
+  while(1){
+    sleep(1);
+  }
 }
+
 
