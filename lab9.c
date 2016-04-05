@@ -15,6 +15,7 @@ int main(){
 	switch(pid=fork()){
 	case 0:
 		signal(SIGUSR1, happy);
+		printf("SIGUSR2 is %d", SIGUSR2);
 		do{
 		//getcount(SIGUSR1);
 		sleep(10);
@@ -22,7 +23,8 @@ int main(){
 		break;
 	default:
 		//ret = sigcounter(pid);
-		while(1){
+		printf("SIGUSR2 is %d", SIGUSR2);
+ 		while(1){
 		sleep(10);
 		ret = kill(pid, SIGUSR1);
 		}

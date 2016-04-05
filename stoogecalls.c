@@ -82,14 +82,14 @@ SYSCALL_DEFINE2(smunch, pid_t,pid, long, bit_pattern){
 
 //Check if zombie state 
   if(p->exit_state == EXIT_ZOMBIE){
-    if((1 << SIGKILL-1) & bit_pattern){
+    if((1 << (SIGKILL-1)) & bit_pattern){
       release_task(p);
     }
     return 0;
   }
   else{
-    wake_up_process(p);
     p->pending.signal.sig[0] |= bit_pattern;
+    wake_up_process(p);
   }
 return 0;
 }
